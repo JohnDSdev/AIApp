@@ -1,0 +1,29 @@
+name: Android CI (Debug APK)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Unzip project
+        run: |
+          unzip ai-chat-app.zip -d .
+            - name: Build Debug APK
+        working-directory: ai-chat-app
+        run: ./gradlew :app:assembleDebug
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: ai-chat-app/app/build/outputs/apk/debug/*.apk
